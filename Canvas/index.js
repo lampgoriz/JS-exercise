@@ -69,23 +69,24 @@ function drawPoints(points) { // function to draw
 drawPoints(points);
 
 // 4 //
+let x = 0;
+let y = 0;
 let canvas4 = document.getElementById('canvas4');
 let ctx4 = canvas4.getContext('2d');
-ctx4.beginPath();
 
-ctx4.addEventListener('mousemove',function (event) {
-    let point = event.position;
-    ctx4.lineWidth = 3;
-
-    ctx4.fill();
+canvas4.addEventListener('mousemove',function (event) {
+    drawLine(ctx4, x, y, event.offsetX, event.offsetY);
+    x = event.offsetX;
+    y = event.offsetY;
 });
 
 
-
-
-
-
-
-
-
-
+function drawLine(context, x1, y1, x2, y2) {
+    context.beginPath();
+    context.strokeStyle = 'black';
+    context.lineWidth = 1;
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
+    context.closePath();
+}
