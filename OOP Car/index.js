@@ -1,47 +1,38 @@
-function Car(x, y, speed) {
-    this.x = x;
-    this.y = y;
-    this.speed = speed;
+function Car(x, y, speed) { // car constructor
+    this.x = x; // position by x axis
+    this.y = y; // position by y axis
+    this.speed = speed; // speed of car
 }
 
-let tesla = new Car(120,150, 10);
-let nisan = new Car(50, 50, 20);
+let tesla = new Car(120,150, 10); // create tesla object
+let nisan = new Car(50, 50, 20); // create nisan object
 
-function drawCar(car) {
-    let img = document.createElement('img');
-    img.src = "img/car.png";
-    img.style.cssText = 'position: absolute; top:' + car.y + "px;" + "left:" +  car.x + "px;";
-    let body = document.body;
-    body.append(img);
-    return img;
+function drawCar(car) { // function to show picture of car
+    let img = document.createElement('img'); // create img element
+    img.src = "img/car.png"; // add source to img
+    img.style.cssText = 'position: absolute; top:' + car.y + "px;" + "left:" +  car.x + "px;"; // add style to img
+    let body = document.body; // get body tag
+    body.append(img); // add img to body
+    return img; // return img to variable
 }
 
-let returnCar = drawCar(tesla);
-returnCar = drawCar(nisan);
+let returnCar = drawCar(tesla); // create tesla img element in HTML
+returnCar = drawCar(nisan); // create nisan img element in HTML
 
-Car.prototype.moveLeft = function (speed) {
-    console.log(speed);
+Car.prototype.moveLeft = function (speed) { // function that move car object to left for distance equal speed
     this.x -= speed;
     returnCar.style.cssText = 'position: absolute; top:' + this.y + "px;" + "left:" +  this.x + "px;";
 }
-Car.prototype.moveTop = function (speed) {
+Car.prototype.moveTop = function (speed) { // function that move car object to top for distance equal speed
     this.y -= speed;
     returnCar.style.cssText = 'position: absolute; top:' + this.y + "px;" + "left:" +  this.x + "px;";
 }
-Car.prototype.moveRight = function () {
+Car.prototype.moveRight = function () { // function that move car object to right for random distance between 0 and 5px
     let randomSpeed = Math.floor(Math.random() * 5);
-    this.x += 5;
+    this.x += randomSpeed;
     returnCar.style.cssText = 'position: absolute; top:' + this.y + "px;" + "left:" +  this.x + "px;";
 }
-Car.prototype.moveBottom = function (speed) {
+Car.prototype.moveBottom = function (speed) { // function that move car object to bottom for distance equal speed
     this.y += speed;
     returnCar.style.cssText = 'position: absolute; top:' + this.y + "px;" + "left:" +  this.x + "px;";
 }
-
-setInterval(tesla.moveRight, 30);
-setInterval(nisan.moveRight, 30);
-//
-// function carsMove() {
-//     tesla.moveRight();
-//     nisan.moveRight();
-// }
