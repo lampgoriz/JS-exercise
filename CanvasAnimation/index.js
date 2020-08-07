@@ -1,17 +1,17 @@
 // 1 //
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
-let positionX = 0;
-let size = 0
+let positionX = 0; // start position by x axis
+let size = 0 // start size
 
 setInterval(function () {
-    context.clearRect(0,0, 800, 800);
-    context.fillRect(positionX, 0, size, size);
+    context.clearRect(0,0, 800, 800); // clearing canvas
+    context.fillRect(positionX, 0, size, size); // redrawing rectangle
 
-    positionX +=2;
-    size++;
+    positionX +=2; // step of rectangle move by x axis
+    size++; // step of rectangle size
 
-    if(positionX > 200){
+    if(positionX > 200){ // if rectangle position equal 200px, reset to zero position and size of rectangle
         positionX = 0;
         size = 0;
     }
@@ -25,6 +25,8 @@ let x = 100; // start position by x axis
 let y = 100; // start position by y axis
 
 setInterval(function () { // start function
+    context2.clearRect(0,0, 200, 200); // clear canvas
+    drawBee(x,y); // draw bee at new position
 
     canvas2.addEventListener('mousemove', function (event) {
         let mouse = [];
@@ -34,18 +36,17 @@ setInterval(function () { // start function
         y = update(y, mouse[1]); // new position by y axis
     });
 
-    context2.clearRect(0,0, 200, 200); // clear canvas
-    drawBee(x,y); // draw bee at new position
     x = update(x); // new position by x axis
     y = update(y); // new position by y axis
 
     context2.strokeRect(0, 0, 200, 150); // show border for bee
 },30);
 
-function circle(context,x,y, radius, fillCircle) { // function to create circle
+function circle(context,x,y, radius, fillCircle, color) { // function to create circle
     context.beginPath(); // start
     context.arc(x, y, radius, 0, Math.PI *2, false); // parameters for circle
     if(fillCircle){ // if fillCircle equal true the circle will be filled
+        context.fillStyle = color
         context.fill();
     }
     else { // if fillCircle equal true the circle will be stroked
@@ -59,28 +60,29 @@ let drawBee = function (x, y) { // drawing bee
     context2.fillStyle = "Gold"; // color for body
     circle(context2,x, y, 8, true); // body
     circle(context2,x, y, 8, false); // body border
-    circle(context2,x - 5, y - 11, 5, false); //
-    circle(context2,x + 5, y - 11, 5, false);
-    circle(context2,x - 2, y - 1, 2, false);
-    circle(context2,x + 2, y - 1, 2, false);
+    circle(context2,x - 5, y - 11, 5, false); // left wing
+    circle(context2,x + 5, y - 11, 5, false); // right wing
+    circle(context2,x - 2, y - 1, 2, false); // left eye
+    circle(context2,x + 2, y - 1, 2, false); // right eye
 };
 
-function update(coordinates, mousePoint) {
+function update(coordinates, mousePoint) { // changing bee position
+
     let offset;
-    if (typeof mousePoint === 'number' && mousePoint - coordinates > -5 && mousePoint - coordinates < 5) {
-        offset = Math.random() * 4 - 2;
-        coordinates += offset;
+    if (mousePoint - coordinates > -10 && mousePoint - coordinates < 10) { // if distance from cursor to bee less than 10px, bee will fly away
+        offset = Math.random() * 4 - 2; // distance of move
+        coordinates += offset; // adding offset to previous coordinates
         // console.log('IF');
     }
+    else if (mousePoint == undefined){
+        offset  = Math.random() * 4 - 2; // distance of move
+        coordinates += offset; // adding offset to previous coordinates
+    }
 
-    offset  = Math.random() * 4 - 2;
-    coordinates += offset;
-    // console.log('ELSE');
-
-    if(coordinates > 150){
+    if(coordinates > 150){ // if bee coordinates equal 150 its will stop
         coordinates = 150;
     }
-    if(coordinates < 0){
+    if(coordinates < 0){ // if bee coordinates equal 0 its will stop
         coordinates = 0;
     }
 
@@ -92,52 +94,47 @@ function update(coordinates, mousePoint) {
 let canvas3 = document.getElementById('canvas3');
 let context3 = canvas3.getContext('2d');
 
-let ball = new Ball();
-
-setInterval(function () {
-    context3.clearRect(0, 0, 200, 200);
-
-    ball.draw();
-    ball.move();
-    ball.checkCollision();
-
-    context3.strokeRect(0, 0, 150, 150);
-},30)
-
-function Ball() {
-    this.x = 100;
-    this.y = 100;
-    this.xSpeed = -2;
-    this.ySpeed = 3;
+let colors = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"]; // array of colors for balls
+let balls = []; // balls array
+for (let i = 0; i < 11; i++){ // create each ball
+    balls[i] = new Ball();
 }
 
-Ball.prototype.draw = function () {
-    circle(context3,this.x, this.y, 3, true);
+
+setInterval(function () { // redrawing balls
+    context3.clearRect(0, 0, 200, 200); // clearing canvas
+
+    for (let i = 0; i < 11; i++){
+        balls[i].draw(); // drawing balls
+        balls[i].move(); // steps of balls
+        balls[i].checkCollision(); // checking contact with walls
+    }
+
+    context3.strokeRect(0, 0, 150, 150); // field border
+},30);
+
+function Ball() { // ball constructor
+    this.x = 100; // start coordinates by x axis
+    this.y = 100; // start coordinates by y axis
+    this.xSpeed = Math.floor(Math.random()*11 - 5); // speed by x axis
+    this.ySpeed = Math.floor(Math.random()*11 - 5); // speed by y axis
+    this.color = colors[Math.floor(Math.random()*colors.length)]; // random color
 }
 
-Ball.prototype.move = function () {
+Ball.prototype.draw = function () { // drawing ball
+    circle(context3,this.x, this.y, 3, true, this.color);
+}
+
+Ball.prototype.move = function () { // calculating next position of ball
     this.x += this.xSpeed;
     this.y += this.ySpeed;
 }
 
-Ball.prototype.checkCollision = function () {
-    if(this.x < 0 || this.x > 150){
+Ball.prototype.checkCollision = function () { // checking contact with walls
+    if(this.x < 0 || this.x > 150){ // if ball contact with wall revers this speed
         this.xSpeed = -this.xSpeed;
     }
-    if(this.y < 0 || this.y > 150){
+    if(this.y < 0 || this.y > 150){ // if ball contact with wall revers this speed
         this.ySpeed = -this.ySpeed;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
